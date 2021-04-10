@@ -6,7 +6,7 @@ import 'package:photofilters/filters/subfilters.dart';
 
 // NoFilter: No filter
 class NoFilter extends ColorFilter {
-  NoFilter() : super(name: "No Filter");
+  NoFilter() : super(name: "Normal");
 
   @override
   void apply(Uint8List pixels, int width, int height) {

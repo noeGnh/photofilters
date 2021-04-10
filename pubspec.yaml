@@ -17,7 +17,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   test:
-  image_picker: ^0.7.3
+  image_picker: ^0.7.4
   path: ^1.8.0
 
 # For information on the generic Dart part of this file, see the
