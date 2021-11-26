@@ -15,9 +15,9 @@ class PhotoFilter extends StatelessWidget {
   final Widget loader;
 
   PhotoFilter({
-    @required this.image,
-    @required this.filename,
-    @required this.filter,
+    required this.image,
+    required this.filename,
+    required this.filter,
     this.fit = BoxFit.fill,
     this.loader = const Center(child: CircularProgressIndicator()),
   });
@@ -25,11 +25,13 @@ class PhotoFilter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<int>>(
-      future: compute(applyFilter, <String, dynamic>{
-        "filter": filter,
-        "image": image,
-        "filename": filename,
-      }),
+      future: compute(
+          applyFilter,
+          <String, dynamic>{
+            "filter": filter,
+            "image": image,
+            "filename": filename,
+          }),
       builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
@@ -41,11 +43,10 @@ class PhotoFilter extends StatelessWidget {
             if (snapshot.hasError)
               return Center(child: Text('Error: ${snapshot.error}'));
             return Image.memory(
-              snapshot.data,
+              snapshot.data as dynamic,
               fit: fit,
             );
         }
-        return null; // unreachable
       },
     );
   }
@@ -64,15 +65,15 @@ class PhotoFilterSelector extends StatefulWidget {
   final bool circleShape;
 
   const PhotoFilterSelector({
-    Key key,
-    @required this.title,
-    @required this.filters,
-    @required this.image,
+    Key? key,
+    required this.title,
+    required this.filters,
+    required this.image,
     this.appBarColor = Colors.blue,
     this.appBarIconsColor = Colors.white,
     this.loader = const Center(child: CircularProgressIndicator()),
     this.fit = BoxFit.fill,
-    @required this.filename,
+    required this.filename,
     this.circleShape = false,
   }) : super(key: key);
 
@@ -81,11 +82,11 @@ class PhotoFilterSelector extends StatefulWidget {
 }
 
 class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
-  String filename;
-  Map<String, List<int>> cachedFilters = {};
-  Filter _filter;
-  imageLib.Image image;
-  bool loading;
+  String? filename;
+  Map<String, List<int>?> cachedFilters = {};
+  Filter? _filter;
+  imageLib.Image? image;
+  late bool loading;
 
   @override
   void initState() {
@@ -197,14 +198,17 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
     );
   }
 
-  _buildFilterThumbnail(Filter filter, imageLib.Image image, String filename) {
-    if (cachedFilters[filter?.name ?? "_"] == null) {
+  _buildFilterThumbnail(
+      Filter filter, imageLib.Image? image, String? filename) {
+    if (cachedFilters[filter.name] == null) {
       return FutureBuilder<List<int>>(
-        future: compute(applyFilter, <String, dynamic>{
-          "filter": filter,
-          "image": image,
-          "filename": filename,
-        }),
+        future: compute(
+            applyFilter ,
+            <String, dynamic>{
+              "filter": filter,
+              "image": image,
+              "filename": filename,
+            }),
         builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -231,7 +235,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
             case ConnectionState.done:
               if (snapshot.hasError)
                 return Center(child: Text('Error: ${snapshot.error}'));
-              cachedFilters[filter?.name ?? "_"] = snapshot.data;
+              cachedFilters[filter.name] = snapshot.data;
               return Container(
                 width: 100,
                 height: 100,
@@ -241,7 +245,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
                 ),
                 child: Image(
                   image: MemoryImage(
-                    snapshot.data,
+                    snapshot.data as dynamic,
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -254,7 +258,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
               //   backgroundColor: Colors.white,
               // );
           }
-          return null; // unreachable
+          // unreachable
         },
       );
     } else {
@@ -267,7 +271,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
         ),
         child: Image(
           image: MemoryImage(
-            cachedFilters[filter?.name ?? "_"],
+            cachedFilters[filter.name] as dynamic,
           ),
           fit: BoxFit.cover,
         ),
@@ -295,19 +299,21 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
 
   Future<File> saveFilteredImage() async {
     var imageFile = await _localFile;
-    await imageFile.writeAsBytes(cachedFilters[_filter?.name ?? "_"]);
+    await imageFile.writeAsBytes(cachedFilters[_filter?.name ?? "_"]!);
     return imageFile;
   }
 
   Widget _buildFilteredImage(
-      Filter filter, imageLib.Image image, String filename) {
+      Filter? filter, imageLib.Image? image, String? filename) {
     if (cachedFilters[filter?.name ?? "_"] == null) {
       return FutureBuilder<List<int>>(
-        future: compute(applyFilter, <String, dynamic>{
-          "filter": filter,
-          "image": image,
-          "filename": filename,
-        }),
+        future: compute(
+            applyFilter,
+            <String, dynamic>{
+              "filter": filter,
+              "image": image,
+              "filename": filename,
+            }),
         builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -327,17 +333,17 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
                         child: CircleAvatar(
                           radius: MediaQuery.of(context).size.width / 3,
                           backgroundImage: MemoryImage(
-                            snapshot.data,
+                            snapshot.data as dynamic,
                           ),
                         ),
                       ),
                     )
                   : Image.memory(
-                      snapshot.data,
+                      snapshot.data as dynamic,
                       fit: BoxFit.contain,
                     );
           }
-          return null; // unreachable
+          // unreachable
         },
       );
     } else {
@@ -349,13 +355,13 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
                 child: CircleAvatar(
                   radius: MediaQuery.of(context).size.width / 3,
                   backgroundImage: MemoryImage(
-                    cachedFilters[filter?.name ?? "_"],
+                    cachedFilters[filter?.name ?? "_"] as dynamic,
                   ),
                 ),
               ),
             )
           : Image.memory(
-              cachedFilters[filter?.name ?? "_"],
+              cachedFilters[filter?.name ?? "_"] as dynamic,
               fit: widget.fit,
             );
     }
@@ -363,24 +369,24 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
 }
 
 ///The global applyfilter function
-List<int> applyFilter(Map<String, dynamic> params) {
-  Filter filter = params["filter"];
+FutureOr<List<int>> applyFilter(Map<String, dynamic> params) {
+  Filter? filter = params["filter"];
   imageLib.Image image = params["image"];
   String filename = params["filename"];
   List<int> _bytes = image.getBytes();
   if (filter != null) {
-    filter.apply(_bytes, image.width, image.height);
+    filter.apply(_bytes as dynamic, image.width, image.height);
   }
   imageLib.Image _image =
       imageLib.Image.fromBytes(image.width, image.height, _bytes);
-  _bytes = imageLib.encodeNamedImage(_image, filename);
+  _bytes = imageLib.encodeNamedImage(_image, filename)!;
 
   return _bytes;
 }
 
 ///The global buildThumbnail function
-List<int> buildThumbnail(Map<String, dynamic> params) {
-  int width = params["width"];
+FutureOr<List<int>> buildThumbnail(Map<String, dynamic> params) {
+  int? width = params["width"];
   params["image"] = imageLib.copyResize(params["image"], width: width);
   return applyFilter(params);
 }
