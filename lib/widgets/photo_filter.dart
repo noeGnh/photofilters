@@ -25,13 +25,11 @@ class PhotoFilter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<int>>(
-      future: compute(
-          applyFilter,
-          <String, dynamic>{
-            "filter": filter,
-            "image": image,
-            "filename": filename,
-          }),
+      future: compute(applyFilter, <String, dynamic>{
+        "filter": filter,
+        "image": image,
+        "filename": filename,
+      }),
       builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
@@ -40,8 +38,7 @@ class PhotoFilter extends StatelessWidget {
           case ConnectionState.waiting:
             return loader;
           case ConnectionState.done:
-            if (snapshot.hasError)
-              return Center(child: Text('Error: ${snapshot.error}'));
+            if (snapshot.hasError) return Center(child: Text('Error: ${snapshot.error}'));
             return Image.memory(
               snapshot.data as dynamic,
               fit: fit,
@@ -115,7 +112,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
               Icons.arrow_back,
               color: widget.appBarIconsColor,
             ),
-            onTap: (){
+            onTap: () {
               Navigator.pop(context, null);
             },
           ),
@@ -172,8 +169,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
-                                    _buildFilterThumbnail(
-                                        widget.filters[index], image, filename),
+                                    _buildFilterThumbnail(widget.filters[index], image, filename),
                                     SizedBox(
                                       height: 5.0,
                                     ),
@@ -198,17 +194,14 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
     );
   }
 
-  _buildFilterThumbnail(
-      Filter filter, imageLib.Image? image, String? filename) {
+  _buildFilterThumbnail(Filter filter, imageLib.Image? image, String? filename) {
     if (cachedFilters[filter.name] == null) {
       return FutureBuilder<List<int>>(
-        future: compute(
-            applyFilter ,
-            <String, dynamic>{
-              "filter": filter,
-              "image": image,
-              "filename": filename,
-            }),
+        future: compute(applyFilter, <String, dynamic>{
+          "filter": filter,
+          "image": image,
+          "filename": filename,
+        }),
         builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -217,32 +210,25 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
               return Container(
                 width: 100,
                 height: 100,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(3))
-                ),
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(3))),
                 child: Center(
                   child: widget.loader,
                 ),
               );
-              // return CircleAvatar(
-              //   radius: 50.0,
-              //   child: Center(
-              //     child: widget.loader,
-              //   ),
-              //   backgroundColor: Colors.white,
-              // );
+            // return CircleAvatar(
+            //   radius: 50.0,
+            //   child: Center(
+            //     child: widget.loader,
+            //   ),
+            //   backgroundColor: Colors.white,
+            // );
             case ConnectionState.done:
-              if (snapshot.hasError)
-                return Center(child: Text('Error: ${snapshot.error}'));
+              if (snapshot.hasError) return Center(child: Text('Error: ${snapshot.error}'));
               cachedFilters[filter.name] = snapshot.data;
               return Container(
                 width: 100,
                 height: 100,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(3))
-                ),
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(3))),
                 child: Image(
                   image: MemoryImage(
                     snapshot.data as dynamic,
@@ -250,13 +236,13 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
                   fit: BoxFit.cover,
                 ),
               );
-              // return CircleAvatar(
-              //   radius: 50.0,
-              //   backgroundImage: MemoryImage(
-              //     snapshot.data,
-              //   ),
-              //   backgroundColor: Colors.white,
-              // );
+            // return CircleAvatar(
+            //   radius: 50.0,
+            //   backgroundImage: MemoryImage(
+            //     snapshot.data,
+            //   ),
+            //   backgroundColor: Colors.white,
+            // );
           }
           // unreachable
         },
@@ -265,10 +251,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
       return Container(
         width: 100,
         height: 100,
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(3))
-        ),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(3))),
         child: Image(
           image: MemoryImage(
             cachedFilters[filter.name] as dynamic,
@@ -303,17 +286,14 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
     return imageFile;
   }
 
-  Widget _buildFilteredImage(
-      Filter? filter, imageLib.Image? image, String? filename) {
+  Widget _buildFilteredImage(Filter? filter, imageLib.Image? image, String? filename) {
     if (cachedFilters[filter?.name ?? "_"] == null) {
       return FutureBuilder<List<int>>(
-        future: compute(
-            applyFilter,
-            <String, dynamic>{
-              "filter": filter,
-              "image": image,
-              "filename": filename,
-            }),
+        future: compute(applyFilter, <String, dynamic>{
+          "filter": filter,
+          "image": image,
+          "filename": filename,
+        }),
         builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -322,8 +302,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
             case ConnectionState.waiting:
               return widget.loader;
             case ConnectionState.done:
-              if (snapshot.hasError)
-                return Center(child: Text('Error: ${snapshot.error}'));
+              if (snapshot.hasError) return Center(child: Text('Error: ${snapshot.error}'));
               cachedFilters[filter?.name ?? "_"] = snapshot.data;
               return widget.circleShape
                   ? SizedBox(
@@ -377,8 +356,7 @@ FutureOr<List<int>> applyFilter(Map<String, dynamic> params) {
   if (filter != null) {
     filter.apply(_bytes as dynamic, image.width, image.height);
   }
-  imageLib.Image _image =
-      imageLib.Image.fromBytes(image.width, image.height, _bytes);
+  imageLib.Image _image = imageLib.Image.fromBytes(image.width, image.height, _bytes);
   _bytes = imageLib.encodeNamedImage(_image, filename)!;
 
   return _bytes;

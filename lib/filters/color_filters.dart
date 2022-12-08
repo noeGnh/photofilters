@@ -19,11 +19,7 @@ class ColorFilter extends Filter {
   @override
   void apply(Uint8List bytes, int width, int height) {
     for (int i = 0; i < bytes.length; i += 4) {
-      RGBA color = RGBA(
-          red: bytes[i],
-          green: bytes[i + 1],
-          blue: bytes[i + 2],
-          alpha: bytes[i + 3]);
+      RGBA color = RGBA(red: bytes[i], green: bytes[i + 1], blue: bytes[i + 2], alpha: bytes[i + 3]);
       for (ColorSubFilter subFilter in subFilters) {
         color = subFilter.applyFilter(color);
       }
