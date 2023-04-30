@@ -356,8 +356,9 @@ FutureOr<List<int>> applyFilter(Map<String, dynamic> params) {
   if (filter != null) {
     filter.apply(_bytes as dynamic, image.width, image.height);
   }
-  imageLib.Image _image = imageLib.Image.fromBytes(image.width, image.height, _bytes);
-  _bytes = imageLib.encodeNamedImage(_image, filename)!;
+  Uint8List bytes = Uint8List.fromList(_bytes);
+  imageLib.Image _image = imageLib.Image.fromBytes(width: image.width, height: image.height, bytes: bytes.buffer);
+  _bytes = imageLib.encodeNamedImage(filename, _image)!;
 
   return _bytes;
 }
