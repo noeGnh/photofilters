@@ -7,14 +7,16 @@ import 'package:photofilters/photofilters.dart';
 import 'package:image/image.dart' as imageLib;
 import 'package:image_picker/image_picker.dart';
 
-void main() => runApp(new MaterialApp(home: MyApp()));
+void main() => runApp(const MaterialApp(home: MyApp()));
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
-  _MyAppState createState() => new _MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> {
   String? fileName;
   List<Filter> filters = presetFiltersList;
   final picker = ImagePicker();
@@ -52,23 +54,23 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('Photo Filter Example'),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Photo Filter Example'),
       ),
       body: Center(
-        child: new Container(
+        child: Container(
           child: imageFile == null
-              ? Center(
-                  child: new Text('No image selected.'),
+              ? const Center(
+                  child: Text('No image selected.'),
                 )
               : Image.file(new File(imageFile!.path)),
         ),
       ),
-      floatingActionButton: new FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () => getImage(context),
         tooltip: 'Pick Image',
-        child: new Icon(Icons.add_a_photo),
+        child: const Icon(Icons.add_a_photo),
       ),
     );
   }

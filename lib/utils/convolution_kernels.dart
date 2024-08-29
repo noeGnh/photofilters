@@ -14,7 +14,7 @@ ConvolutionKernel edgeDetectionHardKernel = new ConvolutionKernel([-1, -1, -1, -
 
 ConvolutionKernel blurKernel = new ConvolutionKernel([0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0]);
 
-ConvolutionKernel guassian3x3Kernel = new ConvolutionKernel([
+ConvolutionKernel guassian3x3Kernel = ConvolutionKernel([
   1,
   2,
   1,
@@ -28,7 +28,7 @@ ConvolutionKernel guassian3x3Kernel = new ConvolutionKernel([
 
 ConvolutionKernel guassian5x5Kernel = new ConvolutionKernel([2, 04, 05, 04, 2, 4, 09, 12, 09, 4, 5, 12, 15, 12, 5, 4, 09, 12, 09, 4, 2, 04, 05, 04, 2]);
 
-ConvolutionKernel guassian7x7Kernel = new ConvolutionKernel([
+ConvolutionKernel guassian7x7Kernel = ConvolutionKernel([
   1,
   1,
   2,
@@ -80,7 +80,7 @@ ConvolutionKernel guassian7x7Kernel = new ConvolutionKernel([
   1,
 ]);
 
-ConvolutionKernel mean3x3Kernel = new ConvolutionKernel([
+ConvolutionKernel mean3x3Kernel = ConvolutionKernel([
   1,
   1,
   1,
@@ -94,7 +94,7 @@ ConvolutionKernel mean3x3Kernel = new ConvolutionKernel([
 
 ConvolutionKernel mean5x5Kernel = new ConvolutionKernel([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
 
-ConvolutionKernel lowPass3x3Kernel = new ConvolutionKernel([
+ConvolutionKernel lowPass3x3Kernel = ConvolutionKernel([
   1,
   2,
   1,
@@ -106,7 +106,7 @@ ConvolutionKernel lowPass3x3Kernel = new ConvolutionKernel([
   1,
 ]);
 
-ConvolutionKernel lowPass5x5Kernel = new ConvolutionKernel([
+ConvolutionKernel lowPass5x5Kernel = ConvolutionKernel([
   1,
   1,
   1,

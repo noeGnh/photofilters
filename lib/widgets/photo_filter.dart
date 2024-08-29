@@ -14,7 +14,8 @@ class PhotoFilter extends StatelessWidget {
   final BoxFit fit;
   final Widget loader;
 
-  PhotoFilter({
+  const PhotoFilter({
+    super.key,
     required this.image,
     required this.filename,
     required this.filter,
@@ -38,7 +39,9 @@ class PhotoFilter extends StatelessWidget {
           case ConnectionState.waiting:
             return loader;
           case ConnectionState.done:
-            if (snapshot.hasError) return Center(child: Text('Error: ${snapshot.error}'));
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
             return Image.memory(
               snapshot.data as dynamic,
               fit: fit,
@@ -75,7 +78,7 @@ class PhotoFilterSelector extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => new _PhotoFilterSelectorState();
+  State<StatefulWidget> createState() => _PhotoFilterSelectorState();
 }
 
 class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
@@ -130,12 +133,13 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
                       });
                       var imageFile = await saveFilteredImage();
 
+                      // ignore: use_build_context_synchronously
                       Navigator.pop(context, {'image_filtered': imageFile});
                     },
                   )
           ],
         ),
-        body: Container(
+        body: SizedBox(
           width: double.infinity,
           height: double.infinity,
           child: loading
@@ -148,7 +152,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
                       child: Container(
                         width: double.infinity,
                         height: double.infinity,
-                        padding: EdgeInsets.all(12.0),
+                        padding: const EdgeInsets.all(12.0),
                         child: _buildFilteredImage(
                           _filter,
                           image,
@@ -352,15 +356,19 @@ FutureOr<List<int>> applyFilter(Map<String, dynamic> params) {
   Filter? filter = params["filter"];
   imageLib.Image image = params["image"];
   String filename = params["filename"];
-  List<int> _bytes = image.getBytes();
+  List<int> bytes0 = image.getBytes();
   if (filter != null) {
-    filter.apply(_bytes as dynamic, image.width, image.height);
+    filter.apply(bytes0 as dynamic, image.width, image.height);
   }
-  Uint8List bytes = Uint8List.fromList(_bytes);
-  imageLib.Image _image = imageLib.Image.fromBytes(width: image.width, height: image.height, bytes: bytes.buffer);
-  _bytes = imageLib.encodeNamedImage(filename, _image)!;
 
-  return _bytes;
+  Uint8List bytes = Uint8List.fromList(bytes0);
+  imageLib.Image image0 = imageLib.Image.fromBytes(width: image.width, height: image.height, bytes: bytes.buffer);
+  bytes0 = imageLib.encodeNamedImage(
+    filename,
+    image0,
+  )!;
+
+  return bytes0;
 }
 
 ///The global buildThumbnail function

@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:photofilters/models.dart';
-import 'package:photofilters/utils/utils.dart' as imageUtils;
+import 'package:photofilters/utils/utils.dart' as image_utils;
 
 int clampPixel(int x) => x.clamp(0, 255);
 RGBA saturation(RGBA color, num saturation) {
@@ -49,7 +49,7 @@ RGBA sepia(RGBA color, num adj) {
 }
 
 RGBA invert(RGBA color) {
-  return new RGBA(
+  return RGBA(
     red: clampPixel(255 - color.red),
     green: clampPixel(255 - color.green),
     blue: clampPixel(255 - color.blue),
@@ -67,10 +67,10 @@ RGBA brightness(RGBA color, num adj) {
 
 // Better result (slow) - adj should be < 1 (desaturated) to 1 (unchanged) and < 1
 RGBA hueSaturation(RGBA color, num adj) {
-  var hsv = imageUtils.rgbToHsv(color.red, color.green, color.blue);
+  var hsv = image_utils.rgbToHsv(color.red, color.green, color.blue);
   hsv[1] = (hsv[1] ?? 0) * adj;
-  var rgb = imageUtils.hsvToRgb(hsv[0]!, hsv[1]!, hsv[2]!);
-  return new RGBA(
+  var rgb = image_utils.hsvToRgb(hsv[0]!, hsv[1]!, hsv[2]!);
+  return RGBA(
     red: clampPixel(rgb[0] as int),
     green: clampPixel(rgb[1] as int),
     blue: clampPixel(rgb[2] as int),
@@ -82,7 +82,7 @@ RGBA hueSaturation(RGBA color, num adj) {
 RGBA contrast(RGBA color, num adj) {
   adj *= 255;
   double factor = (259 * (adj + 255)) / (255 * (259 - adj));
-  return new RGBA(
+  return RGBA(
     red: clampPixel((factor * (color.red - 128) + 128).round()),
     green: clampPixel((factor * (color.green - 128) + 128).round()),
     blue: clampPixel((factor * (color.blue - 128) + 128).round()),
@@ -92,7 +92,7 @@ RGBA contrast(RGBA color, num adj) {
 
 // ColorOverlay - add a slight color overlay.
 RGBA colorOverlay(RGBA color, num red, num green, num blue, num scale) {
-  return new RGBA(
+  return RGBA(
     red: clampPixel((color.red - (color.red - red) * scale).round()),
     green: clampPixel((color.green - (color.green - green) * scale).round()),
     blue: clampPixel((color.blue - (color.blue - blue) * scale).round()),
@@ -102,7 +102,7 @@ RGBA colorOverlay(RGBA color, num red, num green, num blue, num scale) {
 
 // RGB Scale
 RGBA rgbScale(RGBA color, num red, num green, num blue) {
-  return new RGBA(
+  return RGBA(
     red: clampPixel((color.red * red).round()),
     green: clampPixel((color.green * green).round()),
     blue: clampPixel((color.blue * blue).round()),
@@ -111,7 +111,7 @@ RGBA rgbScale(RGBA color, num red, num green, num blue) {
 }
 
 RGBA addictiveColor(RGBA color, int red, int green, int blue) {
-  return new RGBA(
+  return RGBA(
     red: clampPixel(color.red + red),
     green: clampPixel(color.green + green),
     blue: clampPixel(color.blue + blue),

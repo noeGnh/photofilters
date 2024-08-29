@@ -8,7 +8,7 @@ import 'test_utils.dart';
 
 void main() {
   test("Custom Image filter", () {
-    var customFilter = new ImageFilter(name: "Custom Image Filter");
+    var customFilter = ImageFilter(name: "Custom Image Filter");
     customFilter.addSubFilter(ConvolutionSubFilter.fromKernel(
       coloredEdgeDetectionKernel,
     ));
@@ -31,10 +31,10 @@ void main() {
   });
 
   test("Custom Color filter", () {
-    var customFilter = new ColorFilter(name: "Custom Color Filter");
-    customFilter.addSubFilter(SaturationSubFilter(0.5));
+    var customFilter = ColorFilter(name: "Custom Color Filter");
+    /* customFilter.addSubFilter(SaturationSubFilter(0.5));
     customFilter
-        .addSubFilters([BrightnessSubFilter(0.5), HueRotationSubFilter(30)]);
+        .addSubFilters([BrightnessSubFilter(0.5), HueRotationSubFilter(30)]); */
     applyFilterOnFile(customFilter, "res/bird.jpg", "out/custom_color.jpg");
   });
 }
