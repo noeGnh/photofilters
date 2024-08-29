@@ -62,7 +62,8 @@ class PhotoFilterSelector extends StatefulWidget {
   final Widget loader;
   final BoxFit fit;
   final String filename;
-  final bool circleShape;
+  final bool circleShapePreview;
+  final bool circleShapeThumbnails;
 
   const PhotoFilterSelector({
     Key? key,
@@ -74,7 +75,8 @@ class PhotoFilterSelector extends StatefulWidget {
     this.loader = const Center(child: CircularProgressIndicator()),
     this.fit = BoxFit.fill,
     required this.filename,
-    this.circleShape = false,
+    this.circleShapePreview = false,
+    this.circleShapeThumbnails = true,
   }) : super(key: key);
 
   @override
@@ -208,37 +210,79 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
             case ConnectionState.none:
             case ConnectionState.active:
             case ConnectionState.waiting:
-              return CircleAvatar(
-                radius: 50.0,
-                backgroundColor: Colors.white,
-                child: Center(
-                  child: widget.loader,
-                ),
-              );
+              return widget.circleShapeThumbnails
+                  ? CircleAvatar(
+                      radius: 50.0,
+                      backgroundColor: Colors.white,
+                      child: Center(
+                        child: widget.loader,
+                      ),
+                    )
+                  : Container(
+                      width: 100,
+                      height: 100,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(3)),
+                      ),
+                      child: Center(
+                        child: widget.loader,
+                      ),
+                    );
             case ConnectionState.done:
               if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               }
               cachedFilters[filter.name] = snapshot.data;
-              return CircleAvatar(
-                radius: 50.0,
-                backgroundImage: MemoryImage(
-                  snapshot.data as dynamic,
-                ),
-                backgroundColor: Colors.white,
-              );
+              return widget.circleShapeThumbnails
+                  ? CircleAvatar(
+                      radius: 50.0,
+                      backgroundImage: MemoryImage(
+                        snapshot.data as dynamic,
+                      ),
+                      backgroundColor: Colors.white,
+                    )
+                  : Container(
+                      width: 100,
+                      height: 100,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(3)),
+                      ),
+                      child: Image(
+                        image: MemoryImage(
+                          snapshot.data as dynamic,
+                        ),
+                        fit: BoxFit.cover,
+                      ),
+                    );
           }
           // unreachable
         },
       );
     } else {
-      return CircleAvatar(
-        radius: 50.0,
-        backgroundImage: MemoryImage(
-          cachedFilters[filter.name] as dynamic,
-        ),
-        backgroundColor: Colors.white,
-      );
+      return widget.circleShapeThumbnails
+          ? CircleAvatar(
+              radius: 50.0,
+              backgroundImage: MemoryImage(
+                cachedFilters[filter.name] as dynamic,
+              ),
+              backgroundColor: Colors.white,
+            )
+          : Container(
+              width: 100,
+              height: 100,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.all(Radius.circular(3)),
+              ),
+              child: Image(
+                image: MemoryImage(
+                  cachedFilters[filter.name] as dynamic,
+                ),
+                fit: BoxFit.cover,
+              ),
+            );
     }
   }
 
@@ -279,7 +323,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
                 return Center(child: Text('Error: ${snapshot.error}'));
               }
               cachedFilters[filter?.name ?? "_"] = snapshot.data;
-              return widget.circleShape
+              return widget.circleShapePreview
                   ? SizedBox(
                       height: MediaQuery.of(context).size.width / 3,
                       width: MediaQuery.of(context).size.width / 3,
@@ -301,7 +345,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
         },
       );
     } else {
-      return widget.circleShape
+      return widget.circleShapePreview
           ? SizedBox(
               height: MediaQuery.of(context).size.width / 3,
               width: MediaQuery.of(context).size.width / 3,
