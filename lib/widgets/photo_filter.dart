@@ -56,6 +56,7 @@ class PhotoFilter extends StatelessWidget {
 class PhotoFilterSelector extends StatefulWidget {
   final Widget title;
   final Color appBarColor;
+  final Color appBarIconsColor;
   final List<Filter> filters;
   final imagelib.Image image;
   final Widget loader;
@@ -69,6 +70,7 @@ class PhotoFilterSelector extends StatefulWidget {
     required this.filters,
     required this.image,
     this.appBarColor = Colors.blue,
+    this.appBarIconsColor = Colors.white,
     this.loader = const Center(child: CircularProgressIndicator()),
     this.fit = BoxFit.fill,
     required this.filename,
@@ -107,11 +109,23 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
         appBar: AppBar(
           title: widget.title,
           backgroundColor: widget.appBarColor,
+          leading: GestureDetector(
+            child: Icon(
+              Icons.arrow_back,
+              color: widget.appBarIconsColor,
+            ),
+            onTap: () {
+              Navigator.pop(context, null);
+            },
+          ),
           actions: <Widget>[
             loading
                 ? Container()
                 : IconButton(
-                    icon: const Icon(Icons.check),
+                    icon: Icon(
+                      Icons.check,
+                      color: widget.appBarIconsColor,
+                    ),
                     onPressed: () async {
                       setState(() {
                         loading = true;
@@ -157,8 +171,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  _buildFilterThumbnail(
-                                      widget.filters[index], image, filename),
+                                  _buildFilterThumbnail(widget.filters[index], image, filename),
                                   const SizedBox(
                                     height: 5.0,
                                   ),
@@ -182,8 +195,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
     );
   }
 
-  _buildFilterThumbnail(
-      Filter filter, imagelib.Image? image, String? filename) {
+  _buildFilterThumbnail(Filter filter, imagelib.Image? image, String? filename) {
     if (cachedFilters[filter.name] == null) {
       return FutureBuilder<List<int>>(
         future: compute(applyFilter, <String, dynamic>{
@@ -247,8 +259,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
     return imageFile;
   }
 
-  Widget _buildFilteredImage(
-      Filter? filter, imagelib.Image? image, String? filename) {
+  Widget _buildFilteredImage(Filter? filter, imagelib.Image? image, String? filename) {
     if (cachedFilters[filter?.name ?? "_"] == null) {
       return FutureBuilder<List<int>>(
         future: compute(applyFilter, <String, dynamic>{
@@ -322,8 +333,7 @@ FutureOr<List<int>> applyFilter(Map<String, dynamic> params) {
   }
 
   Uint8List bytes = Uint8List.fromList(bytes0);
-  imagelib.Image image0 = imagelib.Image.fromBytes(
-      width: image.width, height: image.height, bytes: bytes.buffer);
+  imagelib.Image image0 = imagelib.Image.fromBytes(width: image.width, height: image.height, bytes: bytes.buffer);
   bytes0 = imagelib.encodeNamedImage(
     filename,
     image0,
