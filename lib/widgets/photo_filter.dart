@@ -3,12 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:image/image.dart' as imagelib;
+import 'package:image/image.dart' as imageLib;
 import 'package:path_provider/path_provider.dart';
 import 'package:photofilters/filters/filters.dart';
 
 class PhotoFilter extends StatelessWidget {
-  final imagelib.Image image;
+  final imageLib.Image image;
   final String filename;
   final Filter filter;
   final BoxFit fit;
@@ -58,7 +58,7 @@ class PhotoFilterSelector extends StatefulWidget {
   final Color appBarColor;
   final Color appBarIconsColor;
   final List<Filter> filters;
-  final imagelib.Image image;
+  final imageLib.Image image;
   final Widget loader;
   final BoxFit fit;
   final String filename;
@@ -87,7 +87,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
   String? filename;
   Map<String, List<int>?> cachedFilters = {};
   Filter? _filter;
-  imagelib.Image? image;
+  imageLib.Image? image;
   late bool loading;
 
   @override
@@ -109,6 +109,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          elevation: 0.0,
           title: widget.title,
           backgroundColor: widget.appBarColor,
           leading: GestureDetector(
@@ -197,7 +198,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
     );
   }
 
-  _buildFilterThumbnail(Filter filter, imagelib.Image? image, String? filename) {
+  _buildFilterThumbnail(Filter filter, imageLib.Image? image, String? filename) {
     if (cachedFilters[filter.name] == null) {
       return FutureBuilder<List<int>>(
         future: compute(applyFilter, <String, dynamic>{
@@ -230,9 +231,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
                       ),
                     );
             case ConnectionState.done:
-              if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
+              if (snapshot.hasError) return Center(child: Text('Error: ${snapshot.error}'));
               cachedFilters[filter.name] = snapshot.data;
               return widget.circleShapeThumbnails
                   ? CircleAvatar(
@@ -303,7 +302,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
     return imageFile;
   }
 
-  Widget _buildFilteredImage(Filter? filter, imagelib.Image? image, String? filename) {
+  Widget _buildFilteredImage(Filter? filter, imageLib.Image? image, String? filename) {
     if (cachedFilters[filter?.name ?? "_"] == null) {
       return FutureBuilder<List<int>>(
         future: compute(applyFilter, <String, dynamic>{
@@ -319,9 +318,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
             case ConnectionState.waiting:
               return widget.loader;
             case ConnectionState.done:
-              if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
+              if (snapshot.hasError) return Center(child: Text('Error: ${snapshot.error}'));
               cachedFilters[filter?.name ?? "_"] = snapshot.data;
               return widget.circleShapePreview
                   ? SizedBox(
@@ -369,7 +366,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
 ///The global applyfilter function
 FutureOr<List<int>> applyFilter(Map<String, dynamic> params) {
   Filter? filter = params["filter"];
-  imagelib.Image image = params["image"];
+  imageLib.Image image = params["image"];
   String filename = params["filename"];
   List<int> bytes0 = image.getBytes();
   if (filter != null) {
@@ -377,8 +374,8 @@ FutureOr<List<int>> applyFilter(Map<String, dynamic> params) {
   }
 
   Uint8List bytes = Uint8List.fromList(bytes0);
-  imagelib.Image image0 = imagelib.Image.fromBytes(width: image.width, height: image.height, bytes: bytes.buffer);
-  bytes0 = imagelib.encodeNamedImage(
+  imageLib.Image image0 = imageLib.Image.fromBytes(width: image.width, height: image.height, bytes: bytes.buffer);
+  bytes0 = imageLib.encodeNamedImage(
     filename,
     image0,
   )!;
@@ -389,6 +386,6 @@ FutureOr<List<int>> applyFilter(Map<String, dynamic> params) {
 ///The global buildThumbnail function
 FutureOr<List<int>> buildThumbnail(Map<String, dynamic> params) {
   int? width = params["width"];
-  params["image"] = imagelib.copyResize(params["image"], width: width);
+  params["image"] = imageLib.copyResize(params["image"], width: width);
   return applyFilter(params);
 }

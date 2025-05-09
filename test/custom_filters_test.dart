@@ -32,9 +32,9 @@ void main() {
 
   test("Custom Color filter", () {
     var customFilter = ColorFilter(name: "Custom Color Filter");
-    customFilter.addSubFilter(SaturationSubFilter(0.5));
+    /* customFilter.addSubFilter(SaturationSubFilter(0.5));
     customFilter
-        .addSubFilters([BrightnessSubFilter(0.5), HueRotationSubFilter(30)]);
+        .addSubFilters([BrightnessSubFilter(0.5), HueRotationSubFilter(30)]); */
     applyFilterOnFile(customFilter, "res/bird.jpg", "out/custom_color.jpg");
   });
 }

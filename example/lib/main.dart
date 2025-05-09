@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:photofilters/photofilters.dart';
-import 'package:image/image.dart' as imagelib;
+import 'package:image/image.dart' as image_lib;
 import 'package:image_picker/image_picker.dart';
 
 void main() => runApp(const MaterialApp(home: MyApp()));
@@ -17,7 +18,7 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
-  String fileName = "";
+  String? fileName;
   List<Filter> filters = presetFiltersList;
   final picker = ImagePicker();
   File? imageFile;
@@ -27,27 +28,30 @@ class MyAppState extends State<MyApp> {
     if (pickedFile != null) {
       imageFile = File(pickedFile.path);
       fileName = basename(imageFile!.path);
-      var image = imagelib.decodeImage(await imageFile!.readAsBytes());
-      image = imagelib.copyResize(image!, width: 600);
-      Map imagefile = await Navigator.push(
+      var image = image_lib.decodeImage(await imageFile!.readAsBytes())!;
+      image = image_lib.copyResize(image, width: 600);
+      Map? imagefile = await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => PhotoFilterSelector(
-            title: const Text("Photo Filter Example"),
-            image: image!,
-            filters: presetFiltersList,
-            filename: fileName,
-            loader: const Center(child: CircularProgressIndicator()),
-            fit: BoxFit.contain,
-          ),
+          builder:
+              (context) => PhotoFilterSelector(
+                title: Text("Photo Filter Example"),
+                image: image,
+                filters: presetFiltersList,
+                filename: fileName ?? '',
+                loader: Center(child: CircularProgressIndicator()),
+                fit: BoxFit.contain,
+              ),
         ),
       );
 
-      if (imagefile.containsKey('image_filtered')) {
+      if (imagefile != null && imagefile.containsKey('image_filtered')) {
         setState(() {
           imageFile = imagefile['image_filtered'];
         });
-        debugPrint(imageFile!.path);
+        if (kDebugMode) {
+          print(imageFile!.path);
+        }
       }
     }
   }
@@ -55,23 +59,9 @@ class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Photo Filter Example'),
-      ),
-      body: Center(
-        child: Container(
-          child: imageFile == null
-              ? const Center(
-                  child: Text('No image selected.'),
-                )
-              : Image.file(File(imageFile!.path)),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => getImage(context),
-        tooltip: 'Pick Image',
-        child: const Icon(Icons.add_a_photo),
-      ),
+      appBar: AppBar(title: const Text('Photo Filter Example')),
+      body: Center(child: Container(child: imageFile == null ? const Center(child: Text('No image selected.')) : Image.file(File(imageFile!.path)))),
+      floatingActionButton: FloatingActionButton(onPressed: () => getImage(context), tooltip: 'Pick Image', child: const Icon(Icons.add_a_photo)),
     );
   }
 }
