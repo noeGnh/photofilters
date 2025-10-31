@@ -23,34 +23,36 @@ class MyAppState extends State<MyApp> {
   final picker = ImagePicker();
   File? imageFile;
 
-  Future getImage(context) async {
+  Future getImage(BuildContext context) async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       imageFile = File(pickedFile.path);
       fileName = basename(imageFile!.path);
       var image = image_lib.decodeImage(await imageFile!.readAsBytes())!;
       image = image_lib.copyResize(image, width: 600);
-      Map? imagefile = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder:
-              (context) => PhotoFilterSelector(
-                title: Text("Photo Filter Example"),
-                image: image,
-                filters: presetFiltersList,
-                filename: fileName ?? '',
-                loader: Center(child: CircularProgressIndicator()),
-                fit: BoxFit.contain,
-              ),
-        ),
-      );
+      if (context.mounted) {
+        Map? imagefile = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => PhotoFilterSelector(
+                  title: Text("Photo Filter Example"),
+                  image: image,
+                  filters: presetFiltersList,
+                  filename: fileName ?? '',
+                  loader: Center(child: CircularProgressIndicator()),
+                  fit: BoxFit.contain,
+                ),
+          ),
+        );
 
-      if (imagefile != null && imagefile.containsKey('image_filtered')) {
-        setState(() {
-          imageFile = imagefile['image_filtered'];
-        });
-        if (kDebugMode) {
-          print(imageFile!.path);
+        if (imagefile != null && imagefile.containsKey('image_filtered')) {
+          setState(() {
+            imageFile = imagefile['image_filtered'];
+          });
+          if (kDebugMode) {
+            print(imageFile!.path);
+          }
         }
       }
     }
